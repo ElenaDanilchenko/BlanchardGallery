@@ -2,15 +2,6 @@
   //пункты меню
   const menuItems = document.querySelectorAll('.nav__link');
 
-  // разделы
-  const sections = document.querySelectorAll('section');
-
-  // map для соотвествия пунктов меню и разделов (первая секция - hero - не имеет соответствующего пункта меню)
-  const menuMap = new Map();
-  for (let i = 0; i < menuItems.length; i++) {
-    menuMap.set(menuItems[i], sections[i + 1]);
-  }
-
   // кнопка "Подписаться на рассылку"
   const subscribeButton = document.querySelector('.hero__btn');
   // секция Контакты, к которой должен быть переход при нажатии "Подписаться на рассылку"
@@ -30,10 +21,11 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     // для каждого пункта меню плавный переход к соотвествующему разделу
-    menuMap.forEach((value, key) => {
-      key.addEventListener('click', (event) => {
+    menuItems.forEach(menuItem => {
+      menuItem.addEventListener('click', event => {
         event.preventDefault();
-        value.scrollIntoView({ behavior: 'smooth' });
+        const section = document.getElementById(menuItem.getAttribute('href').slice(1));
+        section.scrollIntoView({ behavior: 'smooth' });
       });
     });
 
@@ -46,18 +38,18 @@
     });
 
     //валидация полей формы
-    form.addEventListener('submit', async (event) => {
+    form.addEventListener('submit', async event => {
       event.preventDefault();
 
-      const nameInputContent = inputs[0].value;
-      const phoneInputContent = inputs[1].value;
+      const nameInputContent = inputs[0].value.trim();
+      const phoneInputContent = inputs[1].value.trim();
 
       if (!namePattern.test(nameInputContent)) {
-        setInvalidclasses(inputs[0], labels[0]);
+        setInvalidClasses(inputs[0], labels[0]);
         return;
       }
       if (!phonePattern.test(phoneInputContent)) {
-        setInvalidclasses(inputs[1], labels[1]);
+        setInvalidClasses(inputs[1], labels[1]);
         return;
       }
 
@@ -72,14 +64,16 @@
         }
       });
 
+      form.reset();
+
     });
 
-    // удаление стилей, указывающих об ошибке при новом заполнении поля формы
+    // удаление стилей, указывающих об ошибке, при новом заполнении поля формы
     inputs.forEach(input => {
       input.addEventListener('input', () => removeInvalidclasses(input, input.closest('label')));
-    })
+    });
 
-    function setInvalidclasses(input, label) {
+    function setInvalidClasses(input, label) {
       input.classList.add('form__input--invalid');
       label.classList.add('form__label--invalid');
     }
